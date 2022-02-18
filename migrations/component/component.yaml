@@ -1,0 +1,14 @@
+component_name: dbcall_migrations
+require: {}
+include:
+  migrations: '3.0.3' # 3.0.x
+helm:
+  enabled: true
+  app: dbcall-migrations
+  tier: dbcall
+  global: false
+  chart:
+    version: "0.1.0"
+    description: The component provides dbcall migrations
+dir: "/migrations/migrations"
+image: docker-hub.middleware.biz/public/gitcall/dbcall-migrations

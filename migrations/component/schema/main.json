@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.corezoid.com/gitcall/dbcall/migrations/main.json",
+  "type": "object",
+  "required": ["dbcall_migrations"],
+  "properties": {
+    "dbcall_migrations": {
+      "type": "object",
+      "required": ["config"],
+      "properties": {
+        "config": { "$ref":  "https://schema.corezoid.com/packages/migrations/config.json" }
+      }
+    }
+  }
+}

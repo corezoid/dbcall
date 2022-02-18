@@ -1,0 +1,8 @@
+level=error msg="dbcall_migrations.config.migrate.db: String length must be greater than or equal to 1"
+level=error msg="dbcall_migrations.config.migrate.host: String length must be greater than or equal to 1"
+level=error msg="dbcall_migrations.config.migrate.migrator_password: String length must be greater than or equal to 1"
+level=error msg="dbcall_migrations.config.setup.app_password: String length must be greater than or equal to 1"
+level=error msg="dbcall_migrations.config.setup.db: String length must be greater than or equal to 1"
+level=error msg="dbcall_migrations.config.setup.host: String length must be greater than or equal to 1"
+level=error msg="dbcall_migrations.config.setup.migrator_password: String length must be greater than or equal to 1"
+level=error msg="dbcall_migrations.config.setup.owner_password: String length must be greater than or equal to 1"

@@ -1,0 +1,66 @@
+dbcall_migrations:
+    # [REQUIRED]
+    config:
+        # [REQUIRED]
+        # Migrator migrate command properties
+        migrate:
+            app_username: 'postgres'
+            # [REQUIRED]: string.
+            # Database name
+            db: ''
+            # [REQUIRED]: string.
+            # Database host
+            host: ''
+            # [REQUIRED]: string.
+            migrator_password: ''
+            # [REQUIRED]: string.
+            migrator_username: 'postgres'
+            owner_username: 'postgres'
+            # [REQUIRED]: number.
+            # Database port
+            port: 5432
+        # Migrator setup command properties
+        setup:
+            # [REQUIRED]: string.
+            app_password: ''
+            # [REQUIRED]: string.
+            app_username: 'postgres'
+            # [REQUIRED]: string.
+            # Database name
+            db: ''
+            # [REQUIRED]: string.
+            # Database host
+            host: ''
+            # [REQUIRED]: string.
+            migrator_password: ''
+            # [REQUIRED]: string.
+            migrator_username: 'postgres'
+            # [REQUIRED]: string.
+            owner_password: ''
+            # [REQUIRED]: string.
+            owner_username: 'postgres'
+            # [REQUIRED]: number.
+            # Database port
+            port: 5432
+    # [REQUIRED]: object.
+    helm:
+        # [REQUIRED]: array.
+        image_pull_secrets: []
+release:
+    name: 'dbcall_migrations_release'
+    helm:
+        enabled: true
+        chart:
+            version: '0.1.2'
+            description: 'aDescription'
+        context: ''
+        namespace: ''
+        release: ''
+        deploy: ['dbcall_migrations']
+    require:
+        dbcall_migrations: 'aVersion'
+    repositories:
+        dbcall_migrations:
+            source: 'local'
+            local:
+                path: '../'

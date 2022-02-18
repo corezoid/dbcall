@@ -1,0 +1,41 @@
+dbcall_migrations:
+    image: 'migratorimage'
+    config:
+        migrate:
+            migrator_username: migratoruser
+            migrator_password: migratorpass
+            owner_username: owneruser
+            app_username: appuser
+            host: dbhost
+            port: 5445
+            db: dbname
+        setup:
+            migrator_username: migratoruser
+            migrator_password: migratorpass
+            owner_username: owneruser
+            owner_password: ownerpass
+            app_username: appuser
+            app_password: apppass
+            host: dbhost
+            port: 5445
+            db: dbname
+    helm:
+        image_pull_secrets: []
+
+release:
+    name: 'dbcall_migrations_release'
+    helm:
+        enabled: true
+        chart:
+            version: '1.2.3'
+            description: 'aDescription'
+        context: ''
+        namespace: 'aNamespace'
+        release: 'aRelease'
+        deploy: [dbcall_migrations]
+    require:
+        dbcall_migrations: 'aVersion'
+    repositories:
+        dbcall_migrations:
+            source: 'local'
+            local: { path: '../../' }

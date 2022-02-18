@@ -1,0 +1,3 @@
+{{- if .Values.config.migrate.host }}
+{{- include "cz.migrations.migrate_v1" . | indent 0 }}
+{{- end }}

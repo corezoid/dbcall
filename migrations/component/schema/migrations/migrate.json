@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.corezoid.com/packages/migrations/migrate.json",
+  "type": "object",
+  "description":  "Migrator migrate command properties",
+  "required": [
+    "migrator_username",
+    "migrator_password",
+    "host",
+    "port",
+    "db"
+  ],
+  "properties": {
+    "migrator_username": { "type": "string", "minLength": 1, "maxLength": 10000, "default": "postgres" },
+    "migrator_password": { "type": "string", "minLength": 1, "maxLength": 10000, "default": "" },
+    "app_username": { "type": "string", "minLength": 1, "maxLength": 10000, "default": "postgres" },
+    "owner_username": { "type": "string", "minLength": 1, "maxLength": 10000, "default": "postgres" },
+    "host": { "type": "string", "minLength": 1, "maxLength": 10000, "default": "", "description": "Database host" },
+    "port": { "type":  "number", "min": 1, "max": 65535, "default": 5432, "description": "Database port" },
+    "db": { "type": "string", "minLength": 1, "maxLength": 10000, "default": "", "description": "Database name" }
+  }
+}

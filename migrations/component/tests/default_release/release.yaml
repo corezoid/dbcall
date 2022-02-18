@@ -1,0 +1,31 @@
+dbcall_migrations:
+    config:
+        migrate:
+            migrator_username: migratoruser
+            migrator_password: migratorpass
+            owner_username: owneruser
+            app_username: appuser
+            host: dbhost
+            port: 5445
+            db: dbname
+        setup:
+            migrator_username: migratoruser
+            migrator_password: migratorpass
+            owner_username: owneruser
+            owner_password: ownerpass
+            app_username: appuser
+            app_password: apppass
+            host: dbhost
+            port: 5445
+            db: dbname
+
+release:
+    name: 'dbcall_migrations_release'
+    helm:
+        enabled: false
+    require:
+        dbcall_migrations: 'aVersion'
+    repositories:
+        dbcall_migrations:
+            source: 'local'
+            local: { path: '../../' }
