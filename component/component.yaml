@@ -1,0 +1,10 @@
+component_name: dbcall
+helm:
+  enabled: true
+  app: dbcall
+  tier: dbcall
+  chart:
+    version: "2.0.0"
+    description: "The DBCall service. builds and runs usercode functions"
+config_file: 'dbcall.json'
+image: docker-hub.middleware.biz/public/gitcall/dbcall

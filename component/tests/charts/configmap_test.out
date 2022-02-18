@@ -1,0 +1,50 @@
+# Source: dbcall_release/charts/dbcall/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-dbcall-config
+  labels:
+    release: "RELEASE-NAME"
+    app: "dbcall"
+    tier: "dbcall"
+data:
+  dbcall.json: |
+    {
+      "__dbcall_image_path": "docker-hub.middleware.biz/gitcall/dunder-dbcall:latest",
+      "__dbcall_liveness_port": 11234,
+      "__dbcall_readiness_port": 12345,
+      "api": {
+        "server": {
+          "host": "0.0.0.0",
+          "port": 7777
+        }
+      },
+      "database": {
+        "database": "dbcall",
+        "host": "127.0.0.1",
+        "max_open_conns_per_db": 100,
+        "password": "dbpass",
+        "port": 5432,
+        "ssl": false,
+        "timeoutMs": 5000,
+        "username": "postgres"
+      },
+      "liveness_port": 11234,
+      "logger": {
+        "level": "debug",
+        "transports": [
+          "console"
+        ]
+      },
+      "name": "dbcall",
+      "prom_api": "http://prom-api",
+      "readiness_port": 12345,
+      "services_pimp": {
+        "host": "127.0.0.1",
+        "port": 10000,
+        "timeoutMs": 5000
+      },
+      "use_prometheus_metrics": true
+    }
+---
+# Source: dbcall_release/charts/dbcall/templates/service.yaml

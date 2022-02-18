@@ -1,0 +1,81 @@
+# Source: dbcall_release/charts/dbcall/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: RELEASE-NAME-dbcall-deployment
+  labels:
+    release: "RELEASE-NAME"
+    app: "dbcall"
+    tier: "dbcall"
+spec:
+  selector:
+    matchLabels:
+      release: "RELEASE-NAME"
+      app: "dbcall"
+      tier: "dbcall"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  replicas: 
+  template:
+    metadata:
+      annotations:
+        checksum/config: 87b9e80a2faca7636b4961151061d4e48a8b79785dff04a593200e872e227826
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9100"
+        prometheus.io/scrape: "true"
+      labels:
+        release: "RELEASE-NAME"
+        app: "dbcall"
+        tier: "dbcall"
+    spec:
+      terminationGracePeriodSeconds: 40
+      containers:
+        - name: main
+          imagePullPolicy: "Always"
+          image: docker-hub.middleware.biz/gitcall/dbcall:aVersion
+          command: [ "/dbcall/dbcall" ]
+          args: [ '--config=/dbcall/dbcall.json' ]
+          volumeMounts:
+            - name: 'config'
+              mountPath: '/dbcall/dbcall.json'
+              subPath: "dbcall.json"
+          readinessProbe:
+            tcpSocket:
+              port: 12345
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: 11234
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          securityContext:
+            runAsUser: 501
+            runAsGroup: 501
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            privileged: false
+            capabilities:
+              drop:
+                - NET_ADMIN
+                - SYS_ADMIN
+                - MAC_ADMIN
+                - SETUID
+                - SETGID
+                - FOWNER
+                - CHOWN
+                - MKNOD
+      volumes:
+        - name: config
+          configMap:
+            name: RELEASE-NAME-dbcall-config

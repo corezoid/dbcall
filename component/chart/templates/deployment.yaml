@@ -1,0 +1,90 @@
+{{- $d := .Values.helm }}
+{{- $rls := .Values.global.release }}
+{{- $tplVals := .Values }}
+{{- $_ := set $tplVals "Template" .Template }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-dbcall-deployment
+  labels:
+    release: {{ .Release.Name | quote }}
+    app: {{ .Values.helm.app | quote }}
+    tier: {{ .Values.helm.tier | quote }}
+spec:
+  selector:
+    matchLabels:
+      release: {{ .Release.Name | quote }}
+      app: {{ .Values.helm.app | quote }}
+      tier: {{ .Values.helm.tier | quote }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  replicas: {{ .Values.minReplicas }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9100"
+        prometheus.io/scrape: "true"
+      labels:
+        release: {{ .Release.Name | quote }}
+        app: {{ .Values.helm.app | quote }}
+        tier: {{ .Values.helm.tier | quote }}
+    spec:
+      terminationGracePeriodSeconds: 40
+      containers:
+        - name: main
+          imagePullPolicy: {{ $d.image_pull_policy | quote }}
+          image: {{ print .Values.image ":" $rls.require.dbcall }}
+          command: [ "/dbcall/dbcall" ]
+          args: [ '--config=/dbcall/dbcall.json' ]
+          volumeMounts:
+            - name: 'config'
+              mountPath: '/dbcall/dbcall.json'
+              subPath: {{ .Values.config_file | quote }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.config.readiness_port }}
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.config.liveness_port }}
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          securityContext:
+            runAsUser: 501
+            runAsGroup: 501
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            privileged: false
+            capabilities:
+              drop:
+                - NET_ADMIN
+                - SYS_ADMIN
+                - MAC_ADMIN
+                - SETUID
+                - SETGID
+                - FOWNER
+                - CHOWN
+                - MKNOD
+      {{- if $d.image_pull_secrets }}
+      imagePullSecrets:
+      {{- range $d.image_pull_secrets}}
+      - name: {{ . | quote }}
+      {{- end }}
+      {{- end}}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-dbcall-config

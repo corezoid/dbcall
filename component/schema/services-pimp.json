@@ -1,0 +1,27 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "https://schema.corezoid.com/gitcall/dbcall/internal/app/services-pimp.json",
+    "type": "object",
+    "required": [
+        "host",
+        "port",
+        "timeoutMs"
+    ],
+    "properties": {
+        "host": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100000
+        },
+        "port": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 65535
+        },
+        "timeoutMs": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 1000000
+        }
+    }
+}

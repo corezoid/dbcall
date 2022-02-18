@@ -1,0 +1,77 @@
+dbcall:
+    # [REQUIRED]
+    config:
+        # [REQUIRED]: string.
+        __dbcall_image_path: null
+        # [REQUIRED]: number.
+        __dbcall_liveness_port: null
+        # [REQUIRED]: number.
+        __dbcall_readiness_port: null
+        # [REQUIRED]
+        api:
+            # [REQUIRED]: object.
+            server:
+                # [REQUIRED]: string.
+                host: null
+                # [REQUIRED]: number.
+                port: null
+        # [REQUIRED]
+        database:
+            # [REQUIRED]: string.
+            database: null
+            # [REQUIRED]: string.
+            host: null
+            max-open-conns-per-db: null
+            # [REQUIRED]: string.
+            password: null
+            # [REQUIRED]: integer.
+            port: null
+            # [REQUIRED]: boolean.
+            ssl: null
+            # [REQUIRED]: integer.
+            timeoutMs: null
+            # [REQUIRED]: string.
+            username: null
+        # [REQUIRED]: number.
+        liveness_port: null
+        # [REQUIRED]: string.
+        name: null
+        # [REQUIRED]: string.
+        prom_api: null
+        # [REQUIRED]: number.
+        readiness_port: null
+        # [REQUIRED]
+        services_pimp:
+            # [REQUIRED]: string.
+            host: null
+            # [REQUIRED]: number.
+            port: null
+            # [REQUIRED]: number.
+            timeoutMs: null
+        # [REQUIRED]: boolean.
+        use_prometheus_metrics: null
+    # [REQUIRED]: object.
+    # Describes DBCall settings specific for Helm deployment
+    helm:
+        image_pull_policy: 'Always'
+        image_pull_secrets: []
+        max_replicas: 1
+        min_replicas: 1
+release:
+    name: 'dbcall_release'
+    helm:
+        enabled: true
+        chart:
+            version: '0.1.2'
+            description: 'aDescription'
+        context: ''
+        namespace: ''
+        release: ''
+        deploy: ['dbcall']
+    require:
+        dbcall: 'aVersion'
+    repositories:
+        dbcall:
+            source: 'local'
+            local:
+                path: '../'

@@ -1,0 +1,21 @@
+# Source: dbcall_release/charts/dbcall/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: RELEASE-NAME-dbcall-service
+  labels:
+    release: "RELEASE-NAME"
+    app: "dbcall"
+    tier: "dbcall"
+spec:
+  type: NodePort
+  selector:
+    release: "RELEASE-NAME"
+    app: "dbcall"
+    tier: "dbcall"
+  ports:
+  - protocol: TCP
+    port: 7777
+    targetPort: 7777
+---
+# Source: dbcall_release/charts/dbcall/templates/deployment.yaml

@@ -1,0 +1,64 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "https://schema.corezoid.com/gitcall/dbcall/internal/app/config.json",
+    "type": "object",
+    "required": [
+        "name",
+        "__dbcall_image_path",
+        "__dbcall_liveness_port",
+        "__dbcall_readiness_port",
+        "liveness_port",
+        "readiness_port",
+        "use_prometheus_metrics",
+        "api",
+        "services_pimp",
+        "database",
+        "prom_api"
+    ],
+    "properties": {
+        "name": {
+            "type": "string",
+            "minLength": 1
+        },
+        "__dbcall_image_path": {
+            "type": "string",
+            "minLength": 1
+        },
+        "__dbcall_liveness_port": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 65535
+        },
+        "__dbcall_readiness_port": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 65535
+        },
+        "liveness_port": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 65535
+        },
+        "readiness_port": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 65535
+        },
+        "use_prometheus_metrics": {
+            "type": "boolean"
+        },
+        "api": {
+            "$ref": "https://schema.corezoid.com/gitcall/dbcall/internal/app/api.json"
+        },
+        "services_pimp": {
+            "$ref": "https://schema.corezoid.com/gitcall/dbcall/internal/app/services-pimp.json"
+        },
+        "database": {
+            "$ref": "https://schema.corezoid.com/gitcall/dbcall/internal/app/database.json"
+        },
+        "prom_api": {
+            "type": "string",
+            "minLength": 1
+        }
+    }
+}

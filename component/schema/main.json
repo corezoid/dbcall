@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.corezoid.com/gitcall/dbcall/main.json",
+  "type": "object",
+  "required": ["dbcall"],
+  "properties": {
+    "dbcall": {
+      "type": "object",
+      "required": ["config"],
+      "properties": {
+        "config": { "$ref": "https://schema.corezoid.com/gitcall/dbcall/internal/app/config.json" }
+      }
+    }
+  }
+}

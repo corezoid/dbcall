@@ -1,0 +1,41 @@
+dbcall:
+    config:
+        name: 'dbcall'
+        __dbcall_image_path: 'docker-hub.middleware.biz/gitcall/dunder-dbcall:latest'
+        __dbcall_liveness_port: 11234
+        __dbcall_readiness_port: 12345
+        liveness_port: 11234
+        readiness_port: 12345
+        use_prometheus_metrics: true
+        logger:
+            level: debug
+            transports: [ console ]
+        api:
+            server:
+                host: 0.0.0.0
+                port: 7777
+        services_pimp:
+            host: 127.0.0.1
+            port: 10000
+            timeoutMs: 5000
+        database:
+            host: 127.0.0.1
+            port: 5432
+            username: postgres
+            password: dbpass
+            database: dbcall
+            timeoutMs: 5000
+            ssl: false
+            max_open_conns_per_db: 100
+        prom_api: 'http://prom-api'
+
+release:
+    name: 'dbcall_release'
+    helm:
+        enabled: false
+    require:
+        dbcall: 'aVersion'
+    repositories:
+        dbcall:
+            source: 'local'
+            local: { path: '../../' }
