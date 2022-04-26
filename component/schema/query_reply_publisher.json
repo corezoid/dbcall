@@ -1,0 +1,19 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "https://schema.corezoid.com/gitcall/dbcall/internal/queryreplypublisher/config.json",
+    "type": "object",
+    "required": [
+        "host",
+        "port",
+        "username",
+        "password",
+        "vhost"
+    ],
+    "properties": {
+        "host": { "type": "string", "minLength": 1, "maxLength": 100000 },
+        "port": { "type": "number", "minimum": 1, "maximum": 65535, "default": 5672 },
+        "username": { "type": "string", "minLength": 1, "maxLength": 100000 },
+        "password": { "type": "string", "minLength": 1, "maxLength": 100000 },
+        "vhost": { "type": "string", "minLength": 1, "maxLength": 100000 }
+    }
+}

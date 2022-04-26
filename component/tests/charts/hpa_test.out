@@ -1,0 +1,17 @@
+# Source: dbcall_release/charts/dbcall/templates/hpa.yaml
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: RELEASE-NAME-dbcall-autoscale
+  labels:
+    release: "RELEASE-NAME"
+    app: "dbcall"
+    tier: "dbcall"
+spec:
+  minReplicas: 1
+  maxReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: RELEASE-NAME-dbcall-deployment
+  targetCPUUtilizationPercentage: 50

@@ -28,6 +28,26 @@ dbcall:
             ssl: false
             max_open_conns_per_db: 100
         prom_api: 'http://prom-api'
+        query_consumer: 
+            host: '127.0.0.1'
+            port: 5672
+            username: 'rmquser'
+            password: 'rmqpass'
+            vhost: '/'
+            prefetch: 50
+            queue_name: 'dbcall-query'
+        query_reply_publisher:
+            host: '127.0.0.1'
+            port: 5672
+            username: 'rmquser'
+            password: 'rmqpass'
+            vhost: '/'
+        prometheus:
+            enabled: true
+            type: "scrape"
+            metrics_host: "0.0.0.0"
+            metrics_port: 9101
+            not_scraped_check_period_sec: 120
     helm:
         # [REQUIRED]: object.
         image_pull_policy: 'Always'

@@ -18,13 +18,13 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
-  replicas: 
+  replicas: 1
   template:
     metadata:
       annotations:
-        checksum/config: 87b9e80a2faca7636b4961151061d4e48a8b79785dff04a593200e872e227826
-        prometheus.io/path: /metrics
-        prometheus.io/port: "9100"
+        checksum/config: c375f4375e57de613ba7b6b59cd9df662c3b3855a6b3fad384871452f4ab5f70
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "9101"
         prometheus.io/scrape: "true"
       labels:
         release: "RELEASE-NAME"
@@ -38,6 +38,13 @@ spec:
           image: docker-hub.middleware.biz/gitcall/dbcall:aVersion
           command: [ "/dbcall/dbcall" ]
           args: [ '--config=/dbcall/dbcall.json' ]
+          resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
+            requests:
+              cpu: 200m
+              memory: 200Mi
           volumeMounts:
             - name: 'config'
               mountPath: '/dbcall/dbcall.json'
@@ -79,3 +86,5 @@ spec:
         - name: config
           configMap:
             name: RELEASE-NAME-dbcall-config
+---
+# Source: dbcall_release/charts/dbcall/templates/hpa.yaml

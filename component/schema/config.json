@@ -13,9 +13,16 @@
         "api",
         "services_pimp",
         "database",
-        "prom_api"
+        "prom_api",
+
+        "query_consumer",
+        "query_reply_publisher"
     ],
     "properties": {
+        "prometheus": { "$ref": "https://git.corezoid.com/go-pkgs/promapp/config.json" },
+        "query_consumer": { "$ref":  "https://schema.corezoid.com/gitcall/dbcall/internal/queryconsumer/config.json" },
+        "query_reply_publisher": { "$ref":  "https://schema.corezoid.com/gitcall/dbcall/internal/queryreplypublisher/config.json" },
+        
         "name": {
             "type": "string",
             "minLength": 1

@@ -1,0 +1,23 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "https://schema.corezoid.com/gitcall/dbcall/internal/queryconsumer/config.json",
+    "type": "object",
+    "required": [
+        "host",
+        "port",
+        "username",
+        "password",
+        "vhost",
+        "prefetch",
+        "queue_name"
+    ],
+    "properties": {
+        "host": { "type": "string", "minLength": 1, "maxLength": 100000 },
+        "port": { "type": "number",  "minimum": 1, "maximum": 65535 },
+        "username": { "type": "string", "minLength": 1, "maxLength": 100000 },
+        "password": { "type": "string", "minLength": 1, "maxLength": 100000 },
+        "vhost": { "type": "string", "minLength": 1, "maxLength": 100000 },
+        "prefetch": { "type": "number", "minimum": 1, "maximum": 10000000 },
+        "queue_name": { "type": "string",  "minLength": 1, "maxLength": 100000 }
+    }
+}

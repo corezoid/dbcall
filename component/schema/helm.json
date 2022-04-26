@@ -20,7 +20,8 @@
               "type": "array",
               "default": [],
               "items": { "type": "string", "minLength": 1, "maxLength": 10000}
-            }
+            },
+            "resources": { "$ref": "https://schema.corezoid.com/packages/kube/container_resources_v1.json" }
           }
         }
       }

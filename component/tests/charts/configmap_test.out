@@ -38,6 +38,29 @@ data:
       },
       "name": "dbcall",
       "prom_api": "http://prom-api",
+      "prometheus": {
+        "enabled": true,
+        "metrics_host": "0.0.0.0",
+        "metrics_port": 9101,
+        "not_scraped_check_period_sec": 120,
+        "type": "scrape"
+      },
+      "query_consumer": {
+        "host": "127.0.0.1",
+        "password": "rmqpass",
+        "port": 5672,
+        "prefetch": 50,
+        "queue_name": "dbcall-query",
+        "username": "rmquser",
+        "vhost": "/"
+      },
+      "query_reply_publisher": {
+        "host": "127.0.0.1",
+        "password": "rmqpass",
+        "port": 5672,
+        "username": "rmquser",
+        "vhost": "/"
+      },
       "readiness_port": 12345,
       "services_pimp": {
         "host": "127.0.0.1",

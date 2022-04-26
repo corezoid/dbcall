@@ -39,6 +39,62 @@ dbcall:
         name: null
         # [REQUIRED]: string.
         prom_api: null
+        # Expose prometheus metrics. There are two ways promapp can work
+        #  * scrape - the app starts metrics server that prometheus can scrape (preferred)
+        # * push - the app itself sends metrics to prometheus server
+        # Alternative settings:
+        # 0#
+        # [REQUIRED]: boolean.
+        # enabled: true
+        # [REQUIRED]: string.
+        # metrics_host: ''
+        # [REQUIRED]: number.
+        # metrics_port: 0
+        # not_scraped_check_period_sec: 120
+        # [REQUIRED]: string.
+        # type: 'scrape'
+
+        # 1#
+        # [REQUIRED]: boolean.
+        # enabled: true
+        # [REQUIRED]: string.
+        # push_job: ''
+        # [REQUIRED]: number.
+        # push_period_sec: 60
+        # [REQUIRED]: string.
+        # push_url: ''
+        # [REQUIRED]: string.
+        # type: 'push'
+        prometheus:
+            enabled: false
+        # [REQUIRED]
+        query_consumer:
+            # [REQUIRED]: string.
+            host: null
+            # [REQUIRED]: string.
+            password: null
+            # [REQUIRED]: number.
+            port: null
+            # [REQUIRED]: number.
+            prefetch: null
+            # [REQUIRED]: string.
+            queue_name: null
+            # [REQUIRED]: string.
+            username: null
+            # [REQUIRED]: string.
+            vhost: null
+        # [REQUIRED]
+        query_reply_publisher:
+            # [REQUIRED]: string.
+            host: null
+            # [REQUIRED]: string.
+            password: null
+            # [REQUIRED]: number.
+            port: 5672
+            # [REQUIRED]: string.
+            username: null
+            # [REQUIRED]: string.
+            vhost: null
         # [REQUIRED]: number.
         readiness_port: null
         # [REQUIRED]
