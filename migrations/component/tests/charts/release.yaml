@@ -10,6 +10,8 @@ dbcall_migrations:
             port: 5445
             db: dbname
         setup:
+            admin_username: adminuser
+            admin_password: adminpass
             migrator_username: migratoruser
             migrator_password: migratorpass
             owner_username: owneruser

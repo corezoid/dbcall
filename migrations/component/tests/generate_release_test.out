@@ -23,6 +23,10 @@ dbcall_migrations:
         # Migrator setup command properties
         setup:
             # [REQUIRED]: string.
+            admin_password: ''
+            # [REQUIRED]: string.
+            admin_username: 'postgres'
+            # [REQUIRED]: string.
             app_password: ''
             # [REQUIRED]: string.
             app_username: 'postgres'

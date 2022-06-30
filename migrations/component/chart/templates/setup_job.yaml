@@ -1,5 +1,7 @@
+{{- if .Values.config }}
 {{- if .Values.config.setup }}
 {{- if .Values.config.setup.host }}
 {{- include "cz.migrations.setup_v1" . | indent 0 }}
+{{- end }}
 {{- end }}
 {{- end }}

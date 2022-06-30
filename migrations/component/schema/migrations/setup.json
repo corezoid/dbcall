@@ -4,6 +4,8 @@
   "type": "object",
   "description":  "Migrator setup command properties",
   "required": [
+    "admin_username",
+    "admin_password",
     "migrator_username",
     "migrator_password",
     "app_username",
@@ -15,6 +17,8 @@
     "db"
   ],
   "properties": {
+    "admin_username": { "type": "string", "minLength": 1, "maxLength": 10000, "default": "postgres" },
+    "admin_password": { "type": "string", "minLength": 1, "maxLength": 10000, "default": "" },
     "migrator_username": { "type": "string", "minLength": 1, "maxLength": 10000, "default": "postgres" },
     "migrator_password": { "type": "string", "minLength": 1, "maxLength": 10000, "default": "" },
     "app_username": { "type": "string", "minLength": 1, "maxLength": 10000, "default": "postgres" },

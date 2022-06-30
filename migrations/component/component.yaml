@@ -1,7 +1,7 @@
 component_name: dbcall_migrations
 require: {}
 include:
-  migrations: '3.0.3' # 3.0.x
+  migrations: '3.0.6' # 3.0.x
 helm:
   enabled: true
   app: dbcall-migrations

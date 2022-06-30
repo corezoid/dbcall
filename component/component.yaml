@@ -1,6 +1,4 @@
 component_name: dbcall
-include:
-  kube: 3.0.5 # main
 helm:
   enabled: true
   app: dbcall

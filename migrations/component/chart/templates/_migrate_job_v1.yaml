@@ -5,7 +5,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Release.Name }}-{{ .Values.helm.app }}-setup-job
+  name: {{ .Release.Name }}-{{ .Values.helm.app }}-migrate-job
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "0"
