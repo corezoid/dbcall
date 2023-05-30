@@ -1,0 +1,16 @@
+appName: dbcall
+appPort: 8080
+product: corezoid
+image:
+  registry: docker-hub.middleware.biz
+  repository: gitcall/dbcall
+  repository_migrations: gitcall/dbcall-migrations
+  tag: 1.8.9
+  pullPolicy: Always
+  repository_dunder_dbcall: public/gitcall/dunder-dbcall
+  dunder_dbcall_tag: 1.5.2
+scale:
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+dir: "/migrations/migrations"

@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}-deployment
+  labels:
+    {{- include "dbcall.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "dbcall.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  {{- if .Values.global.corezoid_dbcall.minReplicas }}
+  replicas: {{ .Values.global.corezoid_dbcall.minReplicas }}
+  {{- else }}
+  replicas: {{ .Values.scale.minReplicas }}
+  {{- end }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/dbcall-configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "dbcall.labels" . | nindent 8 }}
+    spec:
+      {{ if .Values.global.corezoid_dbcall.affinity }}
+      affinity:
+        {{ .Values.global.corezoid_dbcall.affinity | toYaml | nindent 8 | trim }}
+      {{- end }}
+      terminationGracePeriodSeconds: 40
+      containers:
+        - name: {{ .Values.appName }}
+          image: {{ include "dbcall.imageUrl" . | quote }}
+          env:
+          - name: APP_ENV
+            value: production
+          - name: DATABASE_HOST
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.global.db.secret.name }}
+                key: dbhost
+          - name: DATABASE_PORT
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.global.db.secret.name }}
+                key: dbport
+          - name: DATABASE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.global.db.secret.name }}
+                key: dbuser
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.global.db.secret.name }}
+                key: dbpwd
+          {{- if .Values.global.db.secret.data.dbcallbase }}
+          - name: DATABASE_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.global.db.secret.name }}
+                key: dbcallbase
+          {{- end }}
+          command: ["./dbcall"]
+          args: ["--config=/go/bin/config/production.json"]
+          ports:
+            - containerPort: {{ .Values.appPort }}
+            {{- if .Values.global.serviceMonitor }}
+            {{- if .Values.global.serviceMonitor.enabled }}
+            - containerPort: {{ .Values.global.prometheusPort | default "9100" }}
+            {{- end }}
+            {{- end }}
+          volumeMounts:
+            - name: {{ .Values.appName }}-config
+              mountPath: /go/bin/config/production.json
+              subPath: production.json
+          readinessProbe:
+            httpGet:
+              port: 9300
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              port: 9200
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          securityContext:
+            runAsUser: 501
+            runAsGroup: 501
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            privileged: false
+            capabilities:
+              drop:
+                - NET_ADMIN
+                - SYS_ADMIN
+                - MAC_ADMIN
+                - SETUID
+                - SETGID
+                - FOWNER
+                - CHOWN
+                - MKNOD
+{{- if not (eq .Values.global.repotype "public") }}
+{{- include "common.imagePullSecrets" . | nindent 6 }}
+{{- end }}
+      volumes:
+        - name: {{ .Values.appName }}-config
+          configMap:
+            name: {{ .Values.appName }}-config

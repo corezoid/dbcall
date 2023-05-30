@@ -1,0 +1,98 @@
+{{- $cfg_db := .Values.global.db.secret.data }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.appName }}-migrate-job
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    {{- include "dbcallMigrations.labels" . | nindent 4 }}
+spec:
+  activeDeadlineSeconds: 180 # 3min
+  ttlSecondsAfterFinished: 360 # 6min
+  parallelism: 1
+  completions: 1
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        {{- include "dbcallMigrations.labels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: init-wait-postgres
+          image: docker-hub.middleware.biz/public/pgbouncer:1.17.0-alpine3.16-2
+          command:
+            - sh
+            - -c
+            - |
+              export PGPASSWORD={{ .Values.global.db.secret.dbsuperuserpwd }}
+              cd /etc/pgbouncer/
+              psql -h {{ .Values.global.db.secret.data.dbhost }} -U {{ .Values.global.db.secret.dbsuperuser }} -p {{ .Values.global.db.secret.data.dbport }} -d postgres -Atc "create database dbcall;"; > 1
+              psql -h {{ .Values.global.db.secret.data.dbhost }} -U {{ .Values.global.db.secret.dbsuperuser }} -p {{ .Values.global.db.secret.data.dbport }} -d dbcall -Atc "create role {{ .Values.global.db.secret.data.dbuser }} with password '{{ .Values.global.db.secret.data.dbpwd }}' login;"; > 1
+              psql -h {{ .Values.global.db.secret.data.dbhost }} -U {{ .Values.global.db.secret.dbsuperuser }} -p {{ .Values.global.db.secret.data.dbport }} -d dbcall -Atc 'ALTER DATABASE dbcall OWNER TO {{ .Values.global.db.secret.data.dbuser }}'; > 1
+              psql -h {{ .Values.global.db.secret.data.dbhost }} -U {{ .Values.global.db.secret.dbsuperuser }} -p {{ .Values.global.db.secret.data.dbport }} -d dbcall -Atc '\dt' > 1
+              base=$(cat 1 | cut -c8-10| head -1)
+              if [[ "$base" == "cpk" ]]; then
+              echo "alredy create"
+              else
+              psql -h {{ .Values.global.db.secret.data.dbhost }} -U {{ .Values.global.db.secret.dbsuperuser }} -p {{ .Values.global.db.secret.data.dbport }} -d dbcall -Atc '
+              CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+              CREATE TABLE IF NOT EXISTS dbcall_instances (
+                  id      VARCHAR(100) NOT NULL PRIMARY KEY,
+                  version UUID NOT NULL UNIQUE
+              );
+              CREATE TABLE IF NOT EXISTS dbcall_sync_counter (
+                  id           VARCHAR(100) NOT NULL PRIMARY KEY,
+                  sync_counter BIGINT
+              );'
+              fi
+      containers:
+      - name: main
+        image: {{ include "dbcallMigrations.imageUrl" . | quote }}
+        command: [ "cz" ]
+        args:
+          - "ops"
+          - "migrator"
+          - "migrate"
+          - "--dir={{ .Values.dir }}"
+          - "--host={{ $cfg_db.dbhost }}"
+          - "--port={{ $cfg_db.dbport }}"
+          - "--db={{ $cfg_db.dbcallbase | default "dbcall" }}"
+          - "--migrator-username={{ $cfg_db.dbuser }}"
+          - "--migrator-password={{ $cfg_db.dbpwd }}"
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+        volumeMounts:
+          - name: tmp
+            mountPath: /tmp
+        securityContext:
+          runAsUser: 501
+          runAsGroup: 501
+          runAsNonRoot: true
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          privileged: false
+          capabilities:
+            drop:
+              - NET_ADMIN
+              - SYS_ADMIN
+              - MAC_ADMIN
+              - SETUID
+              - SETGID
+              - FOWNER
+              - CHOWN
+              - MKNOD
+{{- if not (eq .Values.global.repotype "public") }}
+{{- include "common.imagePullSecrets" . | nindent 6 }}
+{{- end }}
+      volumes:
+        - name: tmp
+          emptyDir: { }

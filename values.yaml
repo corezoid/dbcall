@@ -1,0 +1,67 @@
+global:
+  repotype: "public"
+  product: dbcall
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: private-nginx
+  imagePullPolicy: IfNotPresent
+
+  #######  PostgreSQL  ########
+  ## Supported version PostgreSQL-13.*
+  ## for RDS minimum instance - db.t2.medium / master user set "postgres"
+  db:
+    internal: false # don't change this param
+    ## secret configuration for postgresql
+    postgres_schema:
+      version: "1.0.0"
+    ## pvc name
+    persistantVolumeClaimName: "postgresql-pvc" # If internal: true, than uncomment this line
+    secret:
+      ## true - secret will be created automaticaly with provided values
+      ## false - secret should be created manualy
+      create: true
+      ## secret name
+      name: "postgresql-secret"
+      ## for init db and roles dbsuperuser and dbuser cannot be changed (because used as plain text in sql)
+      dbsuperuser: "POSTGRES_USER" # credentials from the superuser
+      ## password - for dbsuperuser
+      dbsuperuserpwd: "POSTGRES_PASSWORD" # credentials from the superuser
+      data:
+        dbhost: "POSTGRES_DB_HOST"
+        dbport: "5432"
+        dbuser: "POSTGRES_DB_USER"
+        dbpwd: "POSTGRES_DB_PASSWORD"
+
+  #######  RabbitMQ  ########
+  ## Supported version  3.9.*
+  mq:
+    internal: false # don't change this param
+    ## secret configuration for rabbitmq
+    secret:
+      ## true - secret will be created automatically with provided values
+      ## false - secret should be created manually
+      create: true
+      name: "rabbitmq-secret"
+      data:
+        host: "RABBTMQ_HOST"
+        port: "5672"
+        vhost: "/dbcall"
+        username: "RABBTMQ_USER"
+        password: "RABBTMQ_PASSWORD"
+    # vm_memory_high_watermark.relative
+    memoryHighWatermark: 0.3
+
+  corezoid_dbcall:
+    prometeus_api: "http://prometheus-server.monitoring.svc:9090"
+    minReplicas: 2
+    maxReplicas: 5
+    resources:
+      limits:
+        cpu: 500m
+        memory: 500Mi
+      requests:
+        cpu: 300m
+        memory: 300Mi
+    config:
+      query_consumer:
+        request_ttl: 360

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.appName }}-service
+  labels:
+    {{- include "dbcall.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "dbcall.labels" . | nindent 4 }}
+  ports:
+  - name: {{ .Values.appName }}-service
+    protocol: TCP
+    port: {{ .Values.appPort }}
+    targetPort: {{ .Values.appPort }}
+  type: NodePort
