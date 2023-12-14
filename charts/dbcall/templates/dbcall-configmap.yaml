@@ -1,5 +1,4 @@
-{{- $cfg_db := .Values.global.db.secret.data }}
-{{- $cfg_mq := .Values.global.mq.secret.data }}
+{{- $data := .Values.global.dbcall.corezoid_dbcall }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -9,65 +8,34 @@ metadata:
 data:
   production.json: |
     {
-      "name": "dbcall",
-      "__dbcall_image_path": "{{ .Values.image.registry }}/{{ .Values.image.repository_dunder_dbcall }}:{{ .Values.image.dunder_dbcall_tag }}",
-      "__dbcall_liveness_port": 9200,
-      "__dbcall_readiness_port": 9300,
-      "liveness_port": 9200,
-      "readiness_port": 9300,
-      "use_prometheus_metrics": true,
-      "logger": {
-        "level": "debug",
-        "transports": [ "console" ]
-      },
-      "api": {
-        "server": {
-          "host": "0.0.0.0",
-          "port": {{ .Values.appPort }}
-        }
-      },
-      "services_pimp": {
-        "host": "http://corezoid-services-pimp-service",
-        "port": 8080,
-        "timeoutMs": 5000
-      },
-      "database": {
-        "host": "{{ $cfg_db.dbhost }}",
-        "port": {{ $cfg_db.dbport }},
-        "username": "{{ $cfg_db.dbuser }}",
-        "password": "{{ $cfg_db.dbpwd }}",
-        "database" : "{{ $cfg_db.dbcallbase | default "dbcall" }}",
-        "timeoutMs": 5000,
-        "ssl": false,
-        "max_open_conns_per_db": 4
+      "log_level": "{{ $data.log_level | default "info" }}",
+      "liveness_port": {{ .Values.livenessPort }},
+      "readiness_port": {{ .Values.readinessPort }},
+      "metrics": {
+        "listen_port": {{ .Values.metricsPort }}
       },
       "query_consumer": {
-        "host": "{{ $cfg_mq.host }}",
-        "password": "{{ $cfg_mq.password }}",
-        "port": {{ $cfg_mq.port }},
+        "host": "${RABBIT_HOST}",
+        "port": ${RABBIT_PORT},
+        "username": "${RABBIT_USERNAME}",
+        "password": "${RABBIT_PASSWORD}",
+        "vhost": "${RABBIT_VHOST}",
         "prefetch": 100,
-        {{- if and .Values.global.corezoid_dbcall.config .Values.global.corezoid_dbcall.config.query_consumer }}
-        {{- with .Values.global.corezoid_dbcall.config.query_consumer.request_ttl }}
-        "request_ttl": {{ . | default 300 }},
-        {{- end }}
-        {{- end }}
         "queue_name": "dbcall-query-1",
-        "username": "{{ $cfg_mq.username }}",
-        "vhost": "{{ .Values.global.mq.secret.data.vhost }}"
+        "ssl": {
+          "enabled": false,
+          "insecure_skip_verify": false
+        }
       },
       "query_reply_publisher": {
-        "host": "{{ $cfg_mq.host }}",
-        "password": "{{ $cfg_mq.password }}",
-        "port": {{ $cfg_mq.port }},
-        "username": "{{ $cfg_mq.username }}",
-        "vhost": "{{ .Values.global.mq.secret.data.vhost }}"
-      },
-      "prom_api": "{{ .Values.global.corezoid_dbcall.prometeus_api }}",
-      "prometheus": {
-        "enabled": true,
-        "metrics_host": "0.0.0.0",
-        "metrics_port": {{ .Values.global.corezoid_dbcall.metrics_port | default 9100 }},
-        "not_scraped_check_period_sec": 120,
-        "type": "scrape"
+        "host": "${RABBIT_HOST}",
+        "port": ${RABBIT_PORT},
+        "username": "${RABBIT_USERNAME}",
+        "password": "${RABBIT_PASSWORD}",
+        "vhost": "${RABBIT_VHOST}",
+        "ssl": {
+          "enabled": false,
+          "insecure_skip_verify": false
+        }
       }
     }

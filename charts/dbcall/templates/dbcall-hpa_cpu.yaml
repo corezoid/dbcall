@@ -1,3 +1,4 @@
+{{- $data := .Values.global.dbcall.corezoid_dbcall }}
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -9,9 +10,9 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Values.appName }}-deployment
-  {{- if and .Values.global.corezoid_dbcall.minReplicas .Values.global.corezoid_dbcall.maxReplicas }}
-  minReplicas: {{ .Values.global.corezoid_dbcall.minReplicas }}
-  maxReplicas: {{ .Values.global.corezoid_dbcall.maxReplicas }}
+  {{- if and $data.minReplicas $data.maxReplicas }}
+  minReplicas: {{ $data.minReplicas }}
+  maxReplicas: {{ $data.maxReplicas }}
   {{- else if and .Values.scale.minReplicas .Values.scale.maxReplicas }}
   minReplicas: {{ .Values.scale.minReplicas }}
   maxReplicas: {{ .Values.scale.maxReplicas }}
