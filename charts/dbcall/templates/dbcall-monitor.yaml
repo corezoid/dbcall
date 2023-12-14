@@ -1,7 +1,8 @@
-{{- if .Values.global.serviceMonitor -}}
-{{- if .Values.global.serviceMonitor.enabled -}}
+{{- $global_data := .Values.global }}
+{{- if $global_data.serviceMonitor -}}
+{{- if $global_data.serviceMonitor.enabled -}}
 apiVersion: {{ include "common.ServiceMonitor.apiVersion" . }}
-kind: ServiceMonitor
+kind: PodMonitor
 metadata:
   name: {{ .Values.appName }}
   labels:
@@ -11,9 +12,9 @@ spec:
   selector:
     matchLabels:
       {{- include "dbcall.labels" . | nindent 6 }}
-  endpoints:
+  podMetricsEndpoints:
   - path: {{ .Values.prometheusPath | default "/metrics" }}
-    targetPort: {{ .Values.global.corezoid_dbcall.metrics_port | default 9100 }}
+    targetPort: {{ .Values.metricsPort }}
     interval: {{ .Values.prometheusInterval | default "15s" }}
 {{- end -}}
 {{- end -}}

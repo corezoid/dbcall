@@ -39,3 +39,7 @@ monitoring.coreos.com/v1
 {{- define "common.ServiceMonitor.metadata.labes" -}}
 simulator.observability/scrape: "true"
 {{- end -}}
+
+{{- define "dbcall.rabbitSecretName" -}}
+{{ .Release.Name }}-dbcall-{{ .Values.global.mq.secret.name }}
+{{- end -}}
