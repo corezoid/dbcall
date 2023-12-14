@@ -7,7 +7,7 @@ product: corezoid
 image:
   registry: docker-hub.middleware.biz
   repository: dbcall/dbcall
-  tag: 2.0.0
+  tag: 2.0.1
 scale:
   minReplicas: 2
   maxReplicas: 10
