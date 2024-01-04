@@ -3,9 +3,6 @@ global:
   product: corezoid
   serviceMonitor:
     enabled: true
-  ingress:
-    annotations:
-      kubernetes.io/ingress.class: nginx
   imagePullPolicy: IfNotPresent
   #######  RabbitMQ  ########
   ## Supported version  3.9.*
