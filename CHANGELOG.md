@@ -5,17 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Chart 0.0.15 [DBCall 2.1.0] - 2024-08-19
+## Chart 0.0.15 [DBCall 2.2.0] - 2024-08-19
 ### Helm changes
 - Change image registry to `hub.corezoid.com` .
 
 
-## Chart 0.0.14 [DBCall 2.1.0] - 2024-07-29
+## Chart 0.0.14 [DBCall 2.2.0] - 2024-07-29
 ### Helm changes
 - Move init-wait to values file.
 
 
-## Chart 0.0.13 [DBCall 2.1.0] - 2024-06-20
+## Chart 0.0.13 [DBCall 2.2.0] - 2024-06-20
 ### Helm changes
 - Changes for imagePullSecrets creation
 ```
@@ -28,12 +28,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ```
 
 
-## Chart 0.0.12 [DBCall 2.1.0] - 2024-06-17
+## Chart 0.0.12 [DBCall 2.2.0] - 2024-06-17
 ### Helm changes
 - Add initContainers for Wait RabbtMQ domaine resolve and port access.
 
 
-## Chart 0.0.11 [DBCall 2.1.0] - 2024-06-11
+## Chart 0.0.11 [DBCall 2.2.0] - 2024-06-11
 ### Helm changes
 - Add affinity and tolerations
 - Update image url createion - add new repo.

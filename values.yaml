@@ -33,7 +33,6 @@ global:
     memoryHighWatermark: 0.3
   dbcall:
     corezoid_dbcall:
-      tag: "2.2.0"
       minReplicas: 3
       maxReplicas: 10
       resources:
