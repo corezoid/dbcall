@@ -25,11 +25,59 @@ spec:
       labels:
         {{- include "dbcall.labels" . | nindent 8 }}
     spec:
-      {{ if .Values.global.dbcall.corezoid_dbcall.affinity }}
-      affinity:
-        {{ .Values.global.dbcall.corezoid_dbcall.affinity | toYaml | nindent 8 | trim }}
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+      {{- range $pullSecret := .Values.global.imagePullSecrets }}
+        - name: {{ $pullSecret }}
+      {{- end }}
       {{- end }}
       terminationGracePeriodSeconds: 40
+      initContainers:
+        - name: init-wait-resolve-rabbit
+          image: {{ .Values.global.imageInit.repository }}:{{ .Values.global.imageInit.tag }}
+          imagePullPolicy: IfNotPresent
+          command: ["sh"]
+          args:
+            - "-c"
+            - |
+              until IP=$(nslookup ${RABBIT_HOST} 2>/dev/null | grep "Address: " | sed 's/.*: //g;s/ .*//g'); [ -n "$IP" ]; do
+                echo "Waiting for Redis IP resolution";
+                sleep 2;
+              done
+          env:
+          - name: RABBIT_HOST
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "dbcall.rabbitSecretName" . }}
+                key: host
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+
+        - name: init-wait-rabbit-port
+          image: {{ .Values.global.imageInit.repository }}:{{ .Values.global.imageInit.tag }}
+          imagePullPolicy: IfNotPresent
+          command: ["sh"]
+          args:
+            - "-c"
+            - |
+              until nc -zw1 ${RABBIT_HOST} ${RABBIT_PORT}; do
+                echo "Waiting for RabbitMQ port";
+                sleep 2;
+              done
+          env:
+          - name: RABBIT_HOST
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "dbcall.rabbitSecretName" . }}
+                key: host
+          - name: RABBIT_PORT
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "dbcall.rabbitSecretName" . }}
+                key: port
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+
       containers:
         - name: {{ .Values.appName }}
           image: {{ include "dbcall.imageUrl" . | quote }}
@@ -113,10 +161,15 @@ spec:
                 - FOWNER
                 - CHOWN
                 - MKNOD
-{{- if not (eq .Values.global.repotype "public") }}
-{{- include "common.imagePullSecrets" . | nindent 6 }}
-{{- end }}
       volumes:
         - name: {{ .Values.appName }}-config
           configMap:
             name: {{ .Values.appName }}-config
+      {{- with .Values.global.dbcall.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.global.dbcall.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -5,7 +5,7 @@ readinessPort: 9300
 metricsPort: 8050
 product: corezoid
 image:
-  registry: docker-hub.middleware.biz
+  registry: hub.corezoid.com
   repository: dbcall/dbcall
   tag: 2.0.1
 scale:

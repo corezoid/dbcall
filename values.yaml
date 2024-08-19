@@ -3,7 +3,13 @@ global:
   product: corezoid
   serviceMonitor:
     enabled: true
+  # imagePullSecrets:
+  #   name: corezoid-secret-dbcall-new-prod
   imagePullPolicy: IfNotPresent
+  imageInit:
+    repository: hub.corezoid.com/hub.docker.com/library/alpine
+    pullPolicy: IfNotPresent
+    tag: "3.20"
   #######  RabbitMQ  ########
   ## Supported version  3.9.*
   mq:
@@ -27,9 +33,9 @@ global:
     memoryHighWatermark: 0.3
   dbcall:
     corezoid_dbcall:
-      prometeus_api: "http://prometheus-server.monitoring"
-      minReplicas: 1
-      maxReplicas: 1
+      tag: "2.2.0"
+      minReplicas: 3
+      maxReplicas: 10
       resources:
         limits:
           memory: 500Mi
