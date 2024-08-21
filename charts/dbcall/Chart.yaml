@@ -3,5 +3,5 @@ name: dbcall
 description: Chart for DBCall.
 icon: https://corezoid.com/static/CorezoidProduct-c2321aa03a80b8ff37d11a82a080ae83.png
 type: application
-version: 0.0.10
-appVersion: 2.1.0
+version: 0.0.15
+appVersion: 2.2.0
