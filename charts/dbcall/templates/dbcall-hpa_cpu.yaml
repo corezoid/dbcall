@@ -1,5 +1,7 @@
-{{- $data := .Values.global.dbcall.corezoid_dbcall }}
-apiVersion: autoscaling/v1
+{{- $global_data := .Values.global }}
+{{- $data := $global_data.dbcall.corezoid_dbcall }}
+{{- if $data.hpa.enabled }}
+apiVersion: {{ include "common.capabilities.hpa.apiVersion" ( dict "context" $ ) }}
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ .Values.appName }}-cpu-autoscale
@@ -7,19 +9,20 @@ metadata:
     {{- include "dbcall.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
     kind: Deployment
     name: {{ .Values.appName }}-deployment
-  {{- if and $data.minReplicas $data.maxReplicas }}
-  minReplicas: {{ $data.minReplicas }}
-  maxReplicas: {{ $data.maxReplicas }}
-  {{- else if and .Values.scale.minReplicas .Values.scale.maxReplicas }}
-  minReplicas: {{ .Values.scale.minReplicas }}
-  maxReplicas: {{ .Values.scale.maxReplicas }}
-  {{- else }}
-  minReplicas: 2
-  maxReplicas: 10
-  {{- end }}
-  {{- if .Values.scale.targetCPUUtilizationPercentage }}
-  targetCPUUtilizationPercentage: {{ .Values.scale.targetCPUUtilizationPercentage }}
-  {{- end }}
+  minReplicas: {{ default (default 2 .Values.scale.minReplicas) $data.minReplicas }}
+  maxReplicas: {{ default (default 10 .Values.scale.maxReplicas) $data.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        {{- if semverCompare "<1.23-0" (include "common.capabilities.kubeVersion" .) }}
+        targetAverageUtilization: {{ .Values.scale.targetCPUUtilizationPercentage }}
+        {{- else }}
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.scale.targetCPUUtilizationPercentage }}
+        {{- end }}
+{{- end -}}

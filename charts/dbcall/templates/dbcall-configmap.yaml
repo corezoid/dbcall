@@ -1,4 +1,7 @@
-{{- $data := .Values.global.dbcall.corezoid_dbcall }}
+{{- $global_data := .Values.global }}
+{{- $corezoid_data := default $global_data.corezoid $global_data }}
+{{- $dbcall_data := $corezoid_data.dbcall }}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -8,7 +11,7 @@ metadata:
 data:
   production.json: |
     {
-      "log_level": "{{ $data.log_level | default "info" }}",
+      "log_level": "{{ $dbcall_data.log_level | default "info" }}",
       "liveness_port": {{ .Values.livenessPort }},
       "readiness_port": {{ .Values.readinessPort }},
       "metrics": {
