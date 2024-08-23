@@ -32,14 +32,14 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
 {{- end }}
 
-{{- define "common.ServiceMonitor.apiVersion" -}}
-monitoring.coreos.com/v1
-{{- end -}}
-
 {{- define "common.ServiceMonitor.metadata.labes" -}}
 simulator.observability/scrape: "true"
 {{- end -}}
 
 {{- define "dbcall.rabbitSecretName" -}}
 {{ .Release.Name }}-dbcall-{{ .Values.global.mq.secret.name }}
+{{- end -}}
+
+{{- define "common.initWait.image" -}}
+{{ .Values.global.imageInit.repository }}:{{ .Values.global.imageInit.tag }}
 {{- end -}}

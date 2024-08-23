@@ -1,4 +1,8 @@
-apiVersion: apps/v1
+{{- $global_data := .Values.global }}
+{{- $corezoid_data := default $global_data.corezoid $global_data }}
+{{- $dbcall_data := $corezoid_data.dbcall }}
+
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
 kind: Deployment
 metadata:
   name: {{ .Values.appName }}-deployment
@@ -13,8 +17,8 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
-  {{- if .Values.global.dbcall.corezoid_dbcall.minReplicas }}
-  replicas: {{ .Values.global.dbcall.corezoid_dbcall.minReplicas }}
+  {{- if $dbcall_data.corezoid_dbcall.minReplicas }}
+  replicas: {{ $dbcall_data.corezoid_dbcall.minReplicas }}
   {{- else }}
   replicas: {{ .Values.scale.minReplicas }}
   {{- end }}
@@ -25,61 +29,19 @@ spec:
       labels:
         {{- include "dbcall.labels" . | nindent 8 }}
     spec:
-      {{- if .Values.global.imagePullSecrets }}
+      {{- if $global_data.imagePullSecrets }}
       imagePullSecrets:
-      {{- range $pullSecret := .Values.global.imagePullSecrets }}
+      {{- range $pullSecret := $global_data.imagePullSecrets }}
         - name: {{ $pullSecret }}
       {{- end }}
       {{- end }}
       terminationGracePeriodSeconds: 40
       initContainers:
-        - name: init-wait-resolve-rabbit
-          image: {{ .Values.global.imageInit.repository }}:{{ .Values.global.imageInit.tag }}
-          imagePullPolicy: IfNotPresent
-          command: ["sh"]
-          args:
-            - "-c"
-            - |
-              until IP=$(nslookup ${RABBIT_HOST} 2>/dev/null | grep "Address: " | sed 's/.*: //g;s/ .*//g'); [ -n "$IP" ]; do
-                echo "Waiting for Redis IP resolution";
-                sleep 2;
-              done
-          env:
-          - name: RABBIT_HOST
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "dbcall.rabbitSecretName" . }}
-                key: host
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-
-        - name: init-wait-rabbit-port
-          image: {{ .Values.global.imageInit.repository }}:{{ .Values.global.imageInit.tag }}
-          imagePullPolicy: IfNotPresent
-          command: ["sh"]
-          args:
-            - "-c"
-            - |
-              until nc -zw1 ${RABBIT_HOST} ${RABBIT_PORT}; do
-                echo "Waiting for RabbitMQ port";
-                sleep 2;
-              done
-          env:
-          - name: RABBIT_HOST
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "dbcall.rabbitSecretName" . }}
-                key: host
-          - name: RABBIT_PORT
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "dbcall.rabbitSecretName" . }}
-                key: port
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-
+        {{ include "CorezoidInitWaitRabbitMQResolve" . | nindent 8 | trim }}
+        {{ include "CorezoidInitWaitRabbitMQPort" . | nindent 8 | trim }}
       containers:
         - name: {{ .Values.appName }}
+          imagePullPolicy: {{ $global_data.imagePullPolicy }}
           image: {{ include "dbcall.imageUrl" . | quote }}
           env:
           - name: APP_ENV
@@ -115,8 +77,8 @@ spec:
             - name: application
               containerPort: {{ .Values.appPort }}
               protocol: TCP
-            {{- if .Values.global.serviceMonitor }}
-            {{- if .Values.global.serviceMonitor.enabled }}
+            {{- if $global_data.serviceMonitor }}
+            {{- if $global_data.serviceMonitor.enabled }}
             - name: monitoring
               containerPort: {{ .Values.metricsPort }}
               protocol: TCP
@@ -143,7 +105,6 @@ spec:
             timeoutSeconds: 5
             successThreshold: 1
             failureThreshold: 3
-          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
           securityContext:
             runAsUser: 501
             runAsGroup: 501
@@ -165,11 +126,11 @@ spec:
         - name: {{ .Values.appName }}-config
           configMap:
             name: {{ .Values.appName }}-config
-      {{- with .Values.global.dbcall.affinity }}
+      {{- with $dbcall_data.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.global.dbcall.tolerations }}
+      {{- with $dbcall_data.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

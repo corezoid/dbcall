@@ -35,6 +35,8 @@ global:
     corezoid_dbcall:
       minReplicas: 3
       maxReplicas: 10
+      hpa:
+        enabled: true
       resources:
         limits:
           memory: 500Mi
