@@ -6,7 +6,7 @@ metricsPort: 8050
 product: corezoid
 image:
   registry: hub.corezoid.com
-  repository: public/dbcall
+  repository: dbcall/dbcall
   tag: 2.2.0
 scale:
   minReplicas: 2
