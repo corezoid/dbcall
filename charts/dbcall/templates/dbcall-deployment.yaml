@@ -77,13 +77,9 @@ spec:
             - name: application
               containerPort: {{ .Values.appPort }}
               protocol: TCP
-            {{- if $global_data.serviceMonitor }}
-            {{- if $global_data.serviceMonitor.enabled }}
             - name: monitoring
               containerPort: {{ .Values.metricsPort }}
               protocol: TCP
-            {{- end }}
-            {{- end }}
           volumeMounts:
             - name: {{ .Values.appName }}-config
               mountPath: /go/bin/config/production.json

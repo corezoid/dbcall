@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Chart 0.0.17 [DBCall 2.2.0] - 2024-10-16
+### Helm changes
+- Metrics are enabled by default
+
 ## Chart 0.0.16 [DBCall 2.2.0] - 2024-08-23
 ### Helm changes
 - Update `init-wait-resolve-rabbit` - add check if RabbitMQ address is not IP.
