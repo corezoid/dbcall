@@ -1,4 +1,6 @@
 {{- $global_data := .Values.global }}
+{{- if $global_data.serviceMonitor -}}
+{{- if $global_data.serviceMonitor.enabled -}}
 apiVersion: {{ include "common.capabilities.ServiceMonitor.apiVersion" . }}
 kind: ServiceMonitor
 metadata:
@@ -14,3 +16,5 @@ spec:
   - path: {{ .Values.prometheusPath | default "/metrics" }}
     targetPort: {{ .Values.metricsPort }}
     interval: {{ .Values.prometheusInterval | default "15s" }}
+{{- end -}}
+{{- end -}}
