@@ -7,7 +7,7 @@ product: corezoid
 image:
   registry: hub.corezoid.com
   repository: dbcall/dbcall
-  tag: 2.2.0
+  tag: 2.3.0
 scale:
   minReplicas: 2
   maxReplicas: 10

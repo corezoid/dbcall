@@ -23,7 +23,7 @@ data:
         "username": "${RABBIT_USERNAME}",
         "password": "${RABBIT_PASSWORD}",
         "vhost": "${RABBIT_VHOST}",
-        "prefetch": {{ $dbcall_data.prefetch | default 100 }},
+        "prefetch": {{ $dbcall_data.prefetch | default 6000 }},
         "queue_name": "dbcall-query-1",
         "ssl": {
           "enabled": false,
