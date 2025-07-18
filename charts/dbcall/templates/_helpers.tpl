@@ -11,3 +11,8 @@ Image URL
   {{- end }}
 {{- end }}
 
+{{- define "app.dbcall.annotations" -}}
+{{- with .Values.global.dbcall.corezoid_dbcall.annotations }}
+{{ toYaml . | trim | indent 4 }}
+{{- end }}
+{{- end }}
