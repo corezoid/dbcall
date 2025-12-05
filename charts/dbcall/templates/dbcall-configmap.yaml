@@ -14,6 +14,7 @@ data:
       "log_level": "{{ $dbcall_data.log_level | default "info" }}",
       "liveness_port": {{ .Values.livenessPort }},
       "readiness_port": {{ .Values.readinessPort }},
+      "max_response_size": {{ $dbcall_data.max_response_size | default 2097152 }},
       "metrics": {
         "listen_port": {{ .Values.metricsPort }}
       },

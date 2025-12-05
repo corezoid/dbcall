@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Chart 0.0.19 [DBCall 2.3.0] - 2025-12-05
+### Application Versions
+- **dbcall**: 2.3.0
+### Helm changes
+- Added `max_response_size` parameter to application configuration (default: 2097152 bytes / 2MB)
+- Added documentation for configuration parameters (`prefetch`, `max_response_size`, `log_level`) in values.yaml
+- Parameters can be managed through `global.dbcall` values
+
 ## Chart 0.0.18 [DBCall 2.3.0] - 2025-07-18
 ### Application Versions
 - **dbcall**: 2.3.0
