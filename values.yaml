@@ -32,6 +32,10 @@ global:
     # vm_memory_high_watermark.relative
     memoryHighWatermark: 0.3
   dbcall:
+    # Application configuration parameters
+    # prefetch: "6000"  # RabbitMQ prefetch count (default: 6000)
+    # max_response_size: "2097152"  # Maximum response size in bytes (default: 2097152 = 2MB)
+    # log_level: "info"  # Log level (default: "info")
     corezoid_dbcall:
       tag: "2.2.0"
       minReplicas: 3
