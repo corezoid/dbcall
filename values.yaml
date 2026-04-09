@@ -18,10 +18,17 @@ global:
     internal: true
     ## secret configuration for rabbitmq
     secret:
-      ## true - secret will be created automatically with provided values
-      ## false - secret should be created manually
+      ## create: true  — Helm creates the Secret from "data" below
+      ## create: false — Secret is managed externally (Vault, External Secrets Operator, etc.);
+      ##                  "data" section is not required.
+      ##                  External Secret must contain keys: host, port, vhost, username, password
       create: true
+      ## name — used to compute Secret name: {{ .Release.Name }}-dbcall-{{ name }}
       name: "rabbitmq-secret"
+      ## secretName — override the full Secret name (ignores "name" above).
+      ## Use when the external Secret has a name that doesn't follow the chart's naming convention.
+      # secretName: "my-external-rabbitmq-secret"
+      ## data is only used when create: true
       data:
         # host: "rabbitmq.rabbitmq.svc.cluster.local"
         host: "RABBTMQ_HOST"  # If internal: true, then this host

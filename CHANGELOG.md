@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Chart 0.0.21 [DBCall 2.5.0] - 2026-04-09
+### Helm changes
+- Added `secretName` field to `global.mq.secret` for external secrets support (Vault, External Secrets Operator, Sealed Secrets)
+- When `create: false`, the chart no longer requires `data` section — Secret is expected to be managed externally
+- `secretName` overrides the computed Secret name (`{{ .Release.Name }}-dbcall-{{ name }}`)
+- Skip Secret creation when `secretName` is set (even if `create: true`)
+- Excluded dev/AI files from Helm chart build pipeline (CLAUDE.md, AGENTS.md, .claude/, .idea/, docs/, task.md)
+
 ## Chart 0.0.20 [DBCall 2.5.0] - 2026-04-07
 ### Application Versions
 - **dbcall**: 2.5.0
