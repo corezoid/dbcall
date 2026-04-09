@@ -20,3 +20,12 @@
 .idea/
 *.tmproj
 .vscode/
+
+# AI agent files
+CLAUDE.md
+AGENTS.md
+.claude/
+
+# Documentation and task files
+docs/
+task.md

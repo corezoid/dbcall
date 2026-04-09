@@ -37,7 +37,11 @@ simulator.observability/scrape: "true"
 {{- end -}}
 
 {{- define "dbcall.rabbitSecretName" -}}
+{{- if .Values.global.mq.secret.secretName -}}
+{{ .Values.global.mq.secret.secretName }}
+{{- else -}}
 {{ .Release.Name }}-dbcall-{{ .Values.global.mq.secret.name }}
+{{- end -}}
 {{- end -}}
 
 {{- define "common.initWait.image" -}}
